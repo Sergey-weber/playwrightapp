@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  playwright-server:
+    image: mcr.microsoft.com/playwright:v1.51.0-noble
+    ports:
+      - "3000:3000"
+    command: npx -y playwright@1.51.0 run-server --port 3000 --host 0.0.0.0
+    user: pwuser
+    working_dir: /home/pwuser
+    init: true
+    security_opt:
+      - seccomp:chrome-seccomp.json
+    cap_add:
+      - SYS_ADMIN
+    volumes:
+      - ./chrome-seccomp.json:/etc/docker/seccomp/chrome-seccomp.json:ro
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - PLAYWRIGHT_WS_ENDPOINT=ws://playwright-server:3000
+      - ALLOWED_DOMAINS=example.com,google.com
+    depends_on:
+      - playwright-server 
