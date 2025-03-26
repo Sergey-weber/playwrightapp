@@ -47,6 +47,16 @@ npm install
 npm run dev
 ```
 
+2. Run for testing xss:
+```bash
+npm run dev
+```
+
+Check processes in container
+```
+docker exec -it $(docker ps -q -f name=playwright-server) top
+```
+
 ## API Endpoints
 
 ### POST /screenshot
@@ -60,6 +70,12 @@ Request body:
 ```
 
 Response: PNG image
+
+```
+curl -X POST -H "Content-Type: application/json" -d '{"url":"http://host.docker.internal:3002"}' http://localhost:3001/screenshot -o test-result.jpg
+
+curl -X POST -H "Content-Type: application/json" -d '{"url":"http://google.com"}' http://localhost:3001/screenshot -o screenshot.jpg
+```
 
 ### GET /health
 Health check endpoint.

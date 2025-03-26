@@ -12,7 +12,7 @@ app.use(express.json());
 
 // Security: List of allowed domains
 const allowedDomains = process.env.ALLOWED_DOMAINS.split(',').map(domain => domain.trim());
-
+console.log(`Allowed domains: ${allowedDomains}`);
 // Security: Domain validation function
 function isAllowedDomain(domain) {
     return allowedDomains.some(allowedDomain =>
@@ -79,17 +79,11 @@ app.post('/screenshot', async (req, res) => {
         console.log('Browser context created successfully');
         console.log('Context process created');
 
-        console.log('Creating new page...');
-        // // Create a new page
-        page = await context.newPage();
-        await page.setDefaultNavigationTimeout(30000);
-        console.log('New page created successfully');
-        console.log('Page process created');
-
         // Security: Route handler to block unauthorized domains
-        await page.route('**/*', route => {
+        await context.route('**/*', route => {
             try {
                 const domain = new URL(route.request().url()).hostname;
+                console.log(`Domain: ${domain}`);
                 if (!isAllowedDomain(domain)) {
                     console.log(`Blocked request to unauthorized domain: ${domain}`);
                     route.abort();
@@ -102,7 +96,14 @@ app.post('/screenshot', async (req, res) => {
             }
         });
 
-        // Navigate to the URL with additional options
+        console.log('Creating new page...');
+        
+        page = await context.newPage();
+        await page.setDefaultNavigationTimeout(30000);
+        console.log('New page created successfully');
+        console.log('Page process created');
+
+        
         await page.goto(url, {
             waitUntil: 'networkidle',
             timeout: 30000
@@ -114,13 +115,13 @@ app.post('/screenshot', async (req, res) => {
             type: 'png'
         });
 
-        // Send response
+        
         res.setHeader('Content-Type', 'image/png');
         res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
         res.setHeader('Pragma', 'no-cache');
         res.setHeader('Expires', '0');
         res.send(screenshot);
-        console.log('CREATE_SCREENSHOT_REQUEST_FINISHED')
+        console.log('CREATE_SCREENSHOT_REQUEST_FINISHED_SUCCESSFULLY')
     } catch (error) {
         console.log('CREATE_SCREENSHOT_REQUEST_FAILED')
         console.error('Screenshot error:', error);

